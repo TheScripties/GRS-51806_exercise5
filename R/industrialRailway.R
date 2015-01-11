@@ -37,46 +37,55 @@ preprocessing <- function(){
   
   # Selects the “industrial” (type == "industrial") railways ----------------
   railwaysdf <- railwaysRD[railwaysRD$type == "industrial",]
-  # here, we could either 
-  ## return the railwaysdf and placesRD 
-  ### railwaysPlaces <- cbind(railwaysdf, placesRD)
-  ### return (railwaysPlaces) # this unfortunately doen's work yet
-  ## or write the railwaysdf and placesRD to different files (as KML/kmz(larger files) files for Google Earth? or as .grd)?
-  writeOGR(railwaysdf, file.path("data","railways.kml"), "railways", driver="KML", overwrite_layer=TRUE)
-  writeOGR(placesRD, file.path("data","places.kml"), "places", driver="KML", overwrite_layer=TRUE)
+  ## write the railwaysdf and placesRD to different files (as KML/kmz(larger files) files for Google Earth? or as .grd)?
+  writeOGR(railwaysdf, file.path("output","railways.kml"), "railways", driver="KML", overwrite_layer=TRUE) # output or data?
+  writeOGR(placesRD, file.path("output","places.kml"), "places", driver="KML", overwrite_layer=TRUE) # output or data?
   #Warning message:
   #In writeOGR(placesRD, file.path("data", "places.kml"), "places",  :
   #Projected coordinate reference system: for KML driver should be geographical
+  SDF <- list("railways" = railwaysdf, "places" = placesRD) #SDF as abbreviation of SpatialDataFrame, SDF$railways = railwaysdf, SDF$places = placesRD
+  print (SDF) #R does print SDF but
+  return (list(SDF)) #R does not return SDF 
 }
 
-buffer <- function(railwaysPlaces) {
-  # Buffer the industrial railway -------------------------------------------
-  #Buffers the “industrial” railways with a buffer of 1000m (hint: gBuffer with byid=TRUE)
-  ## gBuffer(byid = TRUE)
+# Buffer the industrial railway -------------------------------------------
+buffer <- function(SDF) { 
+  railwaysBuffer <- gBuffer (SDF$railways[1,] , width = 1000 , quadsegs = 0 , byid = TRUE) 
+  return (railwaysBuffer)
 }
 
-intersect <- function() {
-  # Find the place that intersects with the railway -------------------------
-  #Find the place (i.e. a city) that intersects with this buffer.
-  ## ?intersect
+# Find the place that intersects with the railway -------------------------
+intersect <- function(SDF, railwaysBuffer) { #Find the place (i.e. a city) that intersects with this buffer.
+  intersectPlaces <- intersect(SDF$places , railwaysBuffer)
+  placeName <- intersectPlaces$name
+  placePopulation <- intersectPlaces$population
+  return (intersectPlaces , placeName , placePopulation)
 }
 
-visualization <- function() {
-  # Create a plot that shows the buffer, points and name of the city --------
-  #Create a plot that shows the buffer, the points, and the name of the city
-  ## plot() / spplot() , add = TRUE
-  ## placeName <- places$name
-}
+# Create a plot that shows the buffer, points and name of the city --------
+visualization <- function(railwaysBuffer , intersectPlaces , SDF , placeName) { #placeName as argument when used for legend
+  plot(railwaysBuffer , col = "gray80")
+  plot(intersectPlaces , add = TRUE , col = "blue") 
+  plot(SDF$railways , add = TRUE , col = "purple") 
+  box()
+  grid()
+  scalebar(d = 1000 , below = "kilometers" , lwd = 2) # below should give tect below the scalebar, but doesn't funciton on my pc
+  # insert placeName as legend?
+  # add x-axis, y-axis, title
   
+  # alternative spplot, but it doen't work as of yet, error code of invalid greaphic state and warning messages for min (x) and max(x)
+  #spplot(railwaysBuffer, zcol="name", col.regions="gray60", 
+  #       sp.layout=list(list("sp.points", intersectPlaces, col="red", pch=19, cex=1.5), 
+  #                      list("sp.lines", SDF$railways, lwd=1.5)))
   
+}
+
 # Name and population of this city ----------------------------------------
-#write down the name of the city and the population of that city as one comment at the end of the script.
-## Placename: 
-## Population: 
-
+## Placename: Utrecht #placeName
+## Population: 100000 #placePopulation
 
 # To do -------------------------------------------------------------------
-#create distinct functions 
+# create distinct functions (the return statements don't work as of yet, but most of the code should work seperately)
 # write explanatory comments
 # description, names, date, above each script
-# warning message at writeOGR in preprocessing function (comment below writeOGR function 
+# warning message at writeOGR in preprocessing function (comment below writeOGR function
