@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="railways" id="railways">
+	<SimpleField name="osm_id" type="float"></SimpleField>
+	<SimpleField name="type" type="string"></SimpleField>
+</Schema>
+<Folder><name>railways</name>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#railways">
+		<SimpleData name="osm_id">4003706</SimpleData>
+		<SimpleData name="type">industrial</SimpleData>
+	</SchemaData></ExtendedData>
+      <LineString><coordinates>-10.02786210476188,455746.56667463959 -21.778246294590645,455743.96508095332 -21.480615822365507,455736.03104738967 -9.410209560592193,455738.0973291886 -10.02786210476188,455746.56667463959</coordinates></LineString>
+  </Placemark>
+</Folder>
+</Document></kml>

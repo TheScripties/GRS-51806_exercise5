@@ -1,11 +1,9 @@
 # Michiel Blok and Madeleine van Winkel
 # 9 January 2015
 
-# Set working directory
-#setwd()
-
 # Import packages
 library(sp)
+library(raster)
 library(rgdal)
 library(rgeos)
 
